@@ -12,7 +12,15 @@ def finish():
                 break
             time.sleep(1)
             print("Wait...")
+        if "leave" in gest.json():
+            for i in gest.json()["leave"]:
+                clear()
+                print(f"{i} выбыл")
         return gest.json()
+    if "leave" in rec.json():
+        for i in rec.json()["leave"]:
+            clear()
+            print(f"{i} выбыл")
     return rec.json()
 
 
@@ -83,6 +91,13 @@ def sell_planes():
     resp = requests.post("http://127.0.0.1:5000/sell_planes", json=order)
 
 
+def print_inf():
+    print(f"Вот цены на сегодня: \n"
+          f"    Предложений сырья: {gest['material']} \n"
+          f"    Минимальная цена сырья: {gest['size_material']} \n"
+          f"    Спрос на истребители: {gest['plane']} \n"
+          f"    Максимальная цена за истребитель: {gest['size_plane']} т.р. \n")
+
 def produce():
     count = input(f"Сколько самолётов вы бы хотели сегодня произвести, максимум {information[4]} штуки\n"
                   f"Цена за один самолёт 2000р и одна единица сырья, \n"
@@ -120,32 +135,27 @@ while 1:
 
 clear()
 gest = gest.json()
+move = {
+    "info": info,
+    "buy_raw": buy_raw,
+    "sell_planes": sell_planes,
+    "produce": produce,
+    "build": build,
+    "finish": finish,
+}
 while 1:
     information = requests.get("http://127.0.0.1:5000/info").json()
+    if information["players_live"] <= 1:
+        break
     for i in information["players"]:
         if i[6] == key:
             information = i
             break
     clear()
-    print(f"Вот цены на сегодня: \n"
-          f"    Предложений сырья: {gest['material']} \n"
-          f"    Минимальная цена сырья: {gest['size_material']} \n"
-          f"    Спрос на истребители: {gest['plane']} \n"
-          f"    Максимальная цена за истребитель: {gest['size_plane']} т.р. \n"
-          f"Нажмите enter, чтоб продолжить \n")
-    input()
-    print("\n \n")
-    move = {
-        "info": info,
-        "buy_raw": buy_raw,
-        "sell_planes": sell_planes,
-        "produce": produce,
-        "build": build,
-        "finish": finish,
-
-    }
     answer = 0
+    c = ["info", "buy_raw", "sell_planes", "produce", "build", "finish"]
     while answer != "finish":
+        print_inf()
         answer = input("Введите, что хотите сделать: \n"
                        "info - Получить информацию об игре \n"
                        "buy_raw - Поучаствовать в акции на сырьё \n"
@@ -154,15 +164,13 @@ while 1:
                        "build - Построить новый цех\n"
                        "finish - закончить данный месяц \n")
         clear()
-        if answer not in ["info", "buy_raw", "sell_planes", "produce", "build", "finish"]:
-            print("Вы ввели что-то неправильно")
+        if answer not in c:
+            print("Вы ввели что-то неправильно или уже выполняли данное действие, в этом месяце")
         else:
+            c.remove(answer)
             a = move[answer]()
     gest = a
 
-# finish = requests.post("http://127.0.0.1:5000/finish", json=check)
-# while 1:
-#     gest = requests.get("http://127.0.0.1:5000/fun_fin")
-#     if gest.json()["started"]:
-#         break
-#     time.sleep(1)
+for i in information["players"]:
+    if i[5] == True:
+        print(f"{i.name} выиграл")

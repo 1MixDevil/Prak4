@@ -12,10 +12,10 @@ app = Flask(__name__)
 def connect():
     name = request.json
     key = Game1.generator_key()
+    Game1.players_live += 1
     player = Player(Game1.players_live, name["name"], key)
     Game1.players.append(player)
     Game1.key_players = Game1.key_players | {key: player}
-    Game1.players_live += 1
 
     if Game1.players_live == 2:
         ret = Game1.price_this_lvl | {"User_key" : key}
@@ -42,7 +42,7 @@ def finish():
         Game1.start_month()
         Game1.buy_raw(Game1.price_this_lvl["material"])
         Game1.sell_planes(Game1.price_this_lvl["plane"])
-        # Game1.taxes()
+        Game1.taxes()
         return jsonify(Game1.price_this_lvl)
 
     return jsonify(started=False)

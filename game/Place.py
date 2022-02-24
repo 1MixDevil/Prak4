@@ -15,7 +15,7 @@ class Place:
         self.now_level = 3
         self.all_finished = 0
         self.key_players = {}
-        self.information = {"number_move": self.number_move, "players": [], "last_auction": []}
+        self.information = {"number_move": self.number_move, "players": [], "last_auction": [], "players_live": count}
         self.chance_level = {1: [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 5],
                              2: [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5],
                              3: [1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5],
@@ -32,7 +32,7 @@ class Place:
         return random.randint(10000000, 999999999)
 
     def start_month(self):
-        self.information = {"number_move": self.number_move, "players": [], "last_auction": []}
+        self.information = {"number_move": self.number_move, "players": [], "last_auction": [], "players_live": self.count}
         for i in self.players:
             if i.live:
                 if len(i.new_shop) != 0:
@@ -87,7 +87,10 @@ class Place:
                         player.plane = 0
                         player.material = 0
                         player.live = False
-                        print(f"{player.name} Выбыл!")
+                        if "leave" not in self.price_this_lvl:
+                            self.price_this_lvl = self.price_this_lvl | {"leave":[player.name]}
+                        else:
+                            self.price_this_lvl["leave"].append(player.name)
                         self.players_live -= 1
                         return False
         return True
