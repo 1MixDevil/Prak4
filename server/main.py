@@ -38,8 +38,10 @@ def information():
 def finish():
     Game1.all_finished += 1
     if Game1.all_finished % len(Game1.players) == 0:
+        Game1.produce()
         Game1.start_month()
         Game1.buy_raw(Game1.price_this_lvl["material"])
+        Game1.sell_planes(Game1.price_this_lvl["plane"])
         # Game1.taxes()
         return jsonify(Game1.price_this_lvl)
 
@@ -60,22 +62,27 @@ def buy_raw():
     return jsonify(1)
 
 
+@app.route("/sell_planes", methods=["POST"])
+def sell_planes():
+    order = request.json
+    Game1.key_players[order["key"]].sell_plane = [order['count'], order["price"]]
+    return jsonify(1)
+
+
 @app.route("/build", methods=["POST"])
 def build():
     order = request.json["key"]
     Game1.key_players[order].add_shop()
 
 
+@app.route("/produce", methods=["POST"])
+def produce():
+    order = request.json
+    Game1.key_players[order["key"]].create_plane += int(order["count"])
+    Game1.key_players[order["key"]].balance -= 2000 * int(order["count"])
+    Game1.key_players[order["key"]].material -= int(order["count"])
+    return jsonify(1)
+
+
 if __name__ == "__main__":
     app.run()
-
-#
-# @app.route("/sell_planes", methods=["POST"])
-# def sell_planes():
-#     return "sell_planes"
-#
-# @app.route("/produce", methods=["POST"])
-# def produce():
-#     return "produce"
-#
-#

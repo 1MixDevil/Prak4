@@ -58,10 +58,17 @@ class Place:
 
         return self.price_new_level()
 
+    def produce(self):
+        for i in self.players:
+            if i.create_plane != 0:
+                if i.live:
+                    i.plane += i.create_plane
+                    i.create_plane = 0
+
     def create_info(self):
         inf = deepcopy(self.information)
         for i in self.players:
-            a = (i.name, i.balance, i.material, i.plane, i.shop, i.live)
+            a = (i.name, i.balance, i.material, i.plane, i.shop, i.live, i.key)
             inf["players"].append(a)
 
         return inf
@@ -84,6 +91,31 @@ class Place:
                         self.players_live -= 1
                         return False
         return True
+
+    def sell_planes(self, info):
+        members = {}
+        for i in self.players:
+            if len(i.sell_plane) != 0:
+                members = members | {int(i.sell_plane[1]): (int(i.sell_plane[0]), i)}
+            i.sell_plane = []
+        while info != 0:
+            if len(members) == 0:
+                break
+            MIN = min(members)
+            count, person = members[MIN]
+            if count > info:
+                count = info
+            if count * MIN <= person.balance:
+                info -= count
+                person.balance += count * MIN
+                person.plane -= count
+                del members[MIN]
+            else:
+                count = person.balance // MIN
+                info -= count
+                person.balance += count * MIN
+                person.plane -= count
+                del members[MIN]
 
     def buy_raw(self, info):
         members = {}

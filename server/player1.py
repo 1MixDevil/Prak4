@@ -16,14 +16,6 @@ def finish():
     return rec.json()
 
 
-def sell_planes():
-    rec = requests.post("http://127.0.0.1:5000/sell_plane")
-
-
-def produce():
-    rec = requests.post("http://127.0.0.1:5000/produce")
-
-
 def build():
     order = {
         "key": key,
@@ -45,17 +37,19 @@ def info():
 
 def buy_raw():
     print(f"Сегодня ты можешь купить {gest['material']} единиц сырья \n" 
-          f"По минимальной цене в {gest['size_material']} рублей")
+          f"По минимальной цене в {gest['size_material']} рублей \n"
+          f"у тебя есть {information[1]} рублей и {information[2]} единиц сырья")
     count = input("Введи количество сырья, которое хочешь купить: \n")
     while 1:
         if 1 > int(count) > gest["material"]:
-            count = input(f"Вы ввели неправильное количество сырья, проверьте, оно не должно быть нулём, и должно быть меньше {gest['material']}: \n")
+            count = input(f"Вы ввели неправильное количество сырья, проверьте, оно не должно быть нулём, и должно быть меньше {gest['material']}: \n"
+                          f"")
         else:
             break
-    money = input(f"Введи, какую сумму денег ты готов отдать за единицу сырья {gest['size_material']} минимум \n")
+    money = input(f"Введи, какую сумму денег ты готов отдать за единицу сырья {gest['size_material']} минимум, у тебя есть {information[1]}\n")
     while 1:
         if int(gest["size_material"]) > int(money):
-            money = input(f"Вы ввели неправильное кол-во денег, проверьте, что данная сумма есть у вас на балансе и она не меньше, чем {gest['size_material']} \n")
+            money = input(f"Вы ввели неправильное кол-во денег, проверьте, что данная сумма есть у вас на балансе и она не меньше, чем {gest['size_material']}, у тебя есть {information[1]}рублей, на балансе \n")
         else:
             break
     order = {
@@ -65,6 +59,46 @@ def buy_raw():
     }
     rec = requests.post("http://127.0.0.1:5000/buy_raw", json=order)
 
+
+def sell_planes():
+    count = input(f"Сегодня ты можешь продать банку *точка* {gest['plane']} самолётов, сколько самолётов ты хочешь продать, у тебя есть {information[4]}: \n")
+    while 1:
+        if 1 > int(count) > gest['plane']:
+            count = input(f"Проверь, правильное ли число ты ввёл, оно должно быть меньше {gest['plane']}, но больше 0, у тебя есть {information[4]}")
+        else:
+            if int(count) <= information[4]:
+                break
+    money = input(f"Банк может купить у тебя самолёт, максимум за {gest['size_plane']} р, за сколько продашь один самолёт: \n")
+    while 1:
+        if gest["size_plane"] < int(money):
+            money = input(f"Проверь, правильно ли число ты ввёл, оно должно быть не больше {gest['size_plane']}")
+        else:
+            break
+
+    order = {
+        "key": key,
+        "count": count,
+        "price": money,
+    }
+    resp = requests.post("http://127.0.0.1:5000/sell_planes", json=order)
+
+
+def produce():
+    count = input(f"Сколько самолётов вы бы хотели сегодня произвести, максимум {information[4]} штуки\n"
+                  f"Цена за один самолёт 2000р и одна единица сырья, \n"
+                  f"у тебя есть {information[1]} рублей и {information[2]} единиц сырья \n")
+    while i:
+        if int(count) <= information[4]:
+            break
+        else:
+            count = input(f"Проверьте, сколько вы хотите произвести сегодня самолётов, максимум {information[4]} штуки\n"
+                          f"Цена за один самолёт 2000р и одна единица сырья, \n"
+                          f"у тебя есть {information[1]} рублей и {information[2]} единиц сырья \n")
+    json = {
+        "key": key,
+        "count": count,
+    }
+    resp = requests.post("http://127.0.0.1:5000/produce", json=json)
 
 clear = lambda: os.system('cls')
 
@@ -87,6 +121,11 @@ while 1:
 clear()
 gest = gest.json()
 while 1:
+    information = requests.get("http://127.0.0.1:5000/info").json()
+    for i in information["players"]:
+        if i[6] == key:
+            information = i
+            break
     clear()
     print(f"Вот цены на сегодня: \n"
           f"    Предложений сырья: {gest['material']} \n"

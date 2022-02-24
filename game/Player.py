@@ -10,6 +10,8 @@ class Player:
         self.live = True
         self.key = key
         self.buy_material = []
+        self.sell_plane = []
+        self.create_plane = 0
 
     def sum_taxes(self):
         material_sum = self.material * 300
