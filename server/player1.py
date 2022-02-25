@@ -2,16 +2,20 @@ import time
 import os
 import requests
 
-
 def finish():
     rec = requests.post("http://127.0.0.1:5000/finish")
     if not rec.json()["started"]:
+        num = 0
         while 1:
+            num += 1
+            if num >= 3:
+                num = 0
             gest = requests.get("http://127.0.0.1:5000/fun_fin")
             if gest.json()["started"]:
                 break
+            c = ["Wait.  ", "Wait.. ", "Wait..."]
+            print(c[num], end= '\r')
             time.sleep(1)
-            print("Wait...")
         if "leave" in gest.json():
             for i in gest.json()["leave"]:
                 print(f"{i} выбыл")
@@ -66,8 +70,7 @@ def buy_raw():
     while 1:
         if 1 > int(count) > gest["material"]:
             count = input(
-                f"Вы ввели неправильное количество сырья, проверьте, оно не должно быть нулём, и должно быть меньше {gest['material']}: \n"
-                f"")
+                f"Вы ввели неправильное количество сырья, проверьте, оно не должно быть нулём, и должно быть меньше {gest['material']}: \n")
         else:
             break
     money = input(
@@ -170,12 +173,18 @@ check = {
 
 resp = requests.post("http://127.0.0.1:5000/connect", json=check)
 key = resp.json()["User_key"]
+numb = 0
 while 1:
+    numb += 1
+    if numb >= 3:
+        numb = 0
     gest = requests.get("http://127.0.0.1:5000/fun")
     if gest.json()["started"]:
         break
+    c = ["Wait.  ", "Wait.. ", "Wait..."]
+    print(c[numb], end='\r')
     time.sleep(1)
-    print("Wait...")
+    # ТУУУУТ
 
 clear()
 gest = gest.json()

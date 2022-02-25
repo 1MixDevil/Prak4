@@ -3,7 +3,8 @@ from game.Place import Place
 from game.Player import Player
 from flask import Flask, jsonify, request
 
-Game1 = Place(2)
+how = int(input("Введите кол-во игроков, которое будет играть: \n"))
+Game1 = Place(int(how))
 
 app = Flask(__name__)
 
@@ -17,7 +18,7 @@ def connect():
     Game1.players.append(player)
     Game1.key_players = Game1.key_players | {key: player}
 
-    if Game1.players_live == 2:
+    if Game1.players_live == how:
         ret = Game1.price_this_lvl | {"User_key" : key}
         return jsonify(ret)
     return jsonify(started=False, User_key=key)
@@ -25,7 +26,7 @@ def connect():
 
 @app.get("/fun")
 def fun():
-    if Game1.players_live == 2:
+    if Game1.players_live == how:
         return jsonify(Game1.price_this_lvl)
     return jsonify(started=False)
 
