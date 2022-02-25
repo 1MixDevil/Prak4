@@ -70,7 +70,6 @@ class Place:
         for i in self.players:
             a = (i.name, i.balance, i.material, i.plane, i.shop, i.live, i.key)
             inf["players"].append(a)
-
         return inf
 
     def taxes(self):
