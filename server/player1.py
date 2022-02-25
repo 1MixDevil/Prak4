@@ -3,14 +3,14 @@ import os
 import requests
 
 def finish():
-    rec = requests.post("http://127.0.0.1:5000/finish")
+    rec = requests.post("http://192.168.43.191:5000/finish")
     if not rec.json()["started"]:
         num = 0
         while 1:
             num += 1
             if num >= 3:
                 num = 0
-            gest = requests.get("http://127.0.0.1:5000/fun_fin")
+            gest = requests.get("http://192.168.43.191:5000/fun_fin")
             if gest.json()["started"]:
                 break
             c = ["Wait.  ", "Wait.. ", "Wait..."]
@@ -40,11 +40,11 @@ def build():
     order = {
         "key": key,
     }
-    rec = requests.post("http://127.0.0.1:5000/build", json=order)
+    rec = requests.post("http://192.168.43.191:5000/build", json=order)
 
 
 def info():
-    rec = requests.get("http://127.0.0.1:5000/info").json()
+    rec = requests.get("http://192.168.43.191:5000/info").json()
     print(f"Сейчас идёт {rec['number_move']} месяц")
     print("Живые игроки:")
     for i in rec["players"]:
@@ -86,7 +86,7 @@ def buy_raw():
         "price": money,
         "key": key
     }
-    rec = requests.post("http://127.0.0.1:5000/buy_raw", json=order)
+    rec = requests.post("http://192.168.43.191:5000/buy_raw", json=order)
 
 
 def sell_planes():
@@ -126,7 +126,7 @@ def sell_planes():
         "count": count,
         "price": money,
     }
-    resp = requests.post("http://127.0.0.1:5000/sell_planes", json=order)
+    resp = requests.post("http://192.168.43.191:5000/sell_planes", json=order)
 
 
 def print_inf():
@@ -159,7 +159,7 @@ def produce():
         "key": key,
         "count": count,
     }
-    resp = requests.post("http://127.0.0.1:5000/produce", json=json)
+    resp = requests.post("http://192.168.43.191:5000/produce", json=json)
 
 
 clear = lambda: os.system('cls')
@@ -171,14 +171,14 @@ check = {
     "room": 1
 }
 
-resp = requests.post("http://127.0.0.1:5000/connect", json=check)
+resp = requests.post("http://192.168.43.191:5000/connect", json=check)
 key = resp.json()["User_key"]
 numb = 0
 while 1:
     numb += 1
     if numb >= 3:
         numb = 0
-    gest = requests.get("http://127.0.0.1:5000/fun")
+    gest = requests.get("http://192.168.43.191:5000/fun")
     if gest.json()["started"]:
         break
     c = ["Wait.  ", "Wait.. ", "Wait..."]
@@ -197,7 +197,7 @@ move = {
     "finish": finish,
 }
 while 1:
-    information = requests.get("http://127.0.0.1:5000/info").json()
+    information = requests.get("http://192.168.43.191:5000/info").json()
     players_live = 0
     for i in information["players"]:
         if i[5]:
