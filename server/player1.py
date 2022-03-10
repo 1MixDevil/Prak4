@@ -3,14 +3,14 @@ import os
 import requests
 
 def finish():
-    rec = requests.post(f"http://192.168.{ip}:5000/finish")
+    rec = requests.post(f"http://{ip}:5000/finish")
     if not rec.json()["started"]:
         num = 0
         while 1:
             num += 1
             if num >= 3:
                 num = 0
-            gest = requests.get(f"http://192.168.{ip}:5000/fun_fin")
+            gest = requests.get(f"http://{ip}:5000/fun_fin")
             if gest.json()["started"]:
                 break
             c = ["Wait.  ", "Wait.. ", "Wait..."]
@@ -40,11 +40,11 @@ def build():
     order = {
         "key": key,
     }
-    rec = requests.post(f"http://192.168.{ip}:5000/build", json=order)
+    rec = requests.post(f"http://{ip}:5000/build", json=order)
 
 
 def info():
-    rec = requests.get(f"http://192.168.{ip}:5000/info").json()
+    rec = requests.get(f"http://{ip}:5000/info").json()
     print(f"Сейчас идёт {rec['number_move']} месяц")
     print("Живые игроки:")
     for i in rec["players"]:
@@ -86,7 +86,7 @@ def buy_raw():
         "price": money,
         "key": key
     }
-    rec = requests.post(f"http://192.168.{ip}:5000/buy_raw", json=order)
+    rec = requests.post(f"http://{ip}:5000/buy_raw", json=order)
 
 
 def sell_planes():
@@ -97,18 +97,18 @@ def sell_planes():
         return False
 
     count = input(
-        f"Сегодня ты можешь продать банку *точка* {gest['plane']} самолётов, сколько самолётов ты хочешь продать, у тебя есть {information[4]}: \n")
+        f"Сегодня ты можешь продать банку *точка* {gest['plane']} самолётов, сколько самолётов ты хочешь продать, у тебя есть {information[3]}: \n")
     while 1:
         try:
             if 1 > int(count) > gest['plane']:
                 count = input(
                     f"Проверь, правильное ли число ты ввёл, оно должно быть меньше {gest['plane']}, но больше 0, у тебя есть {information[4]}")
             else:
-                if int(count) <= information[4]:
+                if int(count) <= information[3]:
                     break
         except ValueError():
             count = input(
-                f"Проверь, правильное ли число ты ввёл, оно должно быть меньше {gest['plane']}, но больше 0, у тебя есть {information[4]}")
+                f"Проверь, правильное ли число ты ввёл, оно должно быть меньше {gest['plane']}, но больше 0, у тебя есть {information[3]}")
 
     money = input(
         f"Банк может купить у тебя самолёт, максимум за {gest['size_plane']} р, за сколько продашь один самолёт: \n")
@@ -126,7 +126,7 @@ def sell_planes():
         "count": count,
         "price": money,
     }
-    resp = requests.post(f"http://192.168.{ip}:5000/sell_planes", json=order)
+    resp = requests.post(f"http://{ip}:5000/sell_planes", json=order)
 
 
 def print_inf():
@@ -159,10 +159,10 @@ def produce():
         "key": key,
         "count": count,
     }
-    resp = requests.post(f"http://192.168.{ip}:5000/produce", json=json)
+    resp = requests.post(f"http://{ip}:5000/produce", json=json)
 
 
-clear = lambda: os.system('cls')
+clear = lambda: os.system('clear')
 
 # name = input("Введите имя: \n")
 name = input("Введите ник игрока: \n")
@@ -170,16 +170,16 @@ check = {
     "name": name,
     "room": 1
 }
-ip = "43.191"
+ip = "192.168.1.200"
 
-resp = requests.post(f"http://192.168.{ip}:5000/connect", json=check)
+resp = requests.post(f"http://{ip}:5000/connect", json=check)
 key = resp.json()["User_key"]
 numb = 0
 while 1:
     numb += 1
     if numb >= 3:
         numb = 0
-    gest = requests.get(f"http://192.168.{ip}:5000/fun")
+    gest = requests.get(f"http://{ip}:5000/fun")
     if gest.json()["started"]:
         break
     c = ["Wait.  ", "Wait.. ", "Wait..."]
@@ -198,7 +198,7 @@ move = {
     "finish": finish,
 }
 while 1:
-    information = requests.get(f"http://192.168.{ip}:5000/info").json()
+    information = requests.get(f"http://{ip}:5000/info").json()
     players_live = 0
     for i in information["players"]:
         if i[5]:

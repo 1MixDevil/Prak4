@@ -73,7 +73,7 @@ class Place:
         return inf
 
     def taxes(self):
-        if self.number_move == 0:
+        if self.number_move == 0 or self.number_move == 1 or self.number_move == 2:
             return False
         else:
             for player in self.players:
